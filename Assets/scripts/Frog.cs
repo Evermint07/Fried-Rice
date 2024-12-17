@@ -115,6 +115,10 @@ public class Frog : MonoBehaviour
         //Debug.Log(currentPosition.x-transform.position.x);
 
         //Debug.Log(x);
+        if (rigid.velocity.x != 0 && !anim.GetBool("ifHit"))
+            rigid.velocity= Vector2.zero;
+        if (transform.position.y<=-4)
+            Destroy(gameObject);
 
     }
     public void ApplyForce(Vector2 force)
