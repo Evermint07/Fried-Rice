@@ -92,12 +92,19 @@ public class Player : MonoBehaviour
                 anim.SetBool("isHit",true);
                 playerHealth -=1;
                 StartCoroutine(UnHit());
-            }
+                rigid.drag = 3f;
+                if (spriteRenderer.flipX)
+                    rigid.AddForce(new Vector2(10f, 5f), ForceMode2D.Impulse); // 힘 설정
+                else
+                    rigid.AddForce(new Vector2(-10f, 5f), ForceMode2D.Impulse);
+                }
         }
     }
     IEnumerator UnHit()
     {
         yield return new WaitForSeconds(0.5f); // 0.5초 대기
         anim.SetBool("isHit", false); // isAttack을 false로 설정
+        rigid.drag=0;
+        rigid.velocity = Vector2.zero;
     }
 }
