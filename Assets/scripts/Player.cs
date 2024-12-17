@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class Player : MonoBehaviour
 {
+    public int playerHealth;
     public GameObject hitbox;
     Rigidbody2D rigid;
     Animator anim;
@@ -23,26 +24,34 @@ public class Player : MonoBehaviour
     void Start()
     {
         hitboxCollider = hitbox.GetComponent<BoxCollider2D>();
+        playerHealth = 5;
     }
 
     // Update is called once per frame
     void Update()
     {
         float horizonalInput = Input.GetAxisRaw("Horizontal");
-        horizon=horizonalInput;
+        //horizon=horizonalInput;
         float verticalInput = Input.GetAxisRaw("Vertical");
         Vector3 moveTo = new Vector3(horizonalInput, 0f, 0f);
         transform.position += moveTo * moveSpeed * Time.deltaTime;
         //flip
-        if(Input.GetButtonDown("Horizontal")){
-            spriteRenderer.flipX = horizonalInput == -1;
+        //if(Input.GetButtonDown("Horizontal")){
+            Debug.Log(horizonalInput);
+            Debug.Log(spriteRenderer.flipX);
+            if(horizonalInput ==-1f){
+                spriteRenderer.flipX =true;
+            }
+            if(horizonalInput ==1f){
+                spriteRenderer.flipX =false;
+            }
             if(spriteRenderer.flipX){
                 hitbox.transform.position=transform.position+ new Vector3(-0.5f, 0.7f, 0);
             }
             else{
                 hitbox.transform.position=transform.position+ new Vector3(0.5f, 0.7f, 0);
             }
-        }
+        //}
 
         //run
         if(horizonalInput == 0) {
@@ -68,7 +77,7 @@ public class Player : MonoBehaviour
             anim.SetBool("isAttack",true);
             StartCoroutine(ResetAttack());
         }
-
+    Debug.Log(playerHealth);
         
     }
     IEnumerator ResetAttack()
@@ -76,9 +85,19 @@ public class Player : MonoBehaviour
         yield return new WaitForSeconds(0.5f); // 0.5초 대기
         anim.SetBool("isAttack", false); // isAttack을 false로 설정
     }
-    //private void OnCollisionEnter2D(Collision2D other) {
-    //    if (other.gameObject.tag == "Ground"){
-    //        anim.SetBool("isJump",false);
-    //    }
-    //}
+    private void OnCollisionStay2D(Collision2D other) {
+        if (other.gameObject.tag=="entity" && !anim.GetBool("isHit")){
+            Animator targetAnimator = other.gameObject.GetComponent<Animator>();
+            if(targetAnimator.GetBool("isAttacking")){
+                anim.SetBool("isHit",true);
+                playerHealth -=1;
+                StartCoroutine(UnHit());
+            }
+        }
+    }
+    IEnumerator UnHit()
+    {
+        yield return new WaitForSeconds(0.5f); // 0.5초 대기
+        anim.SetBool("isHit", false); // isAttack을 false로 설정
+    }
 }
