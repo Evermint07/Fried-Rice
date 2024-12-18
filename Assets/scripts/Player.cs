@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Player : MonoBehaviour
 {
-    public int playerHealth;
+    public uint playerHealth;
     public GameObject hitbox;
     Rigidbody2D rigid;
     Animator anim;
@@ -30,27 +30,26 @@ public class Player : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (anim.GetBool("death"))
+        return;
         float horizonalInput = Input.GetAxisRaw("Horizontal");
         //horizon=horizonalInput;
-        float verticalInput = Input.GetAxisRaw("Vertical");
         Vector3 moveTo = new Vector3(horizonalInput, 0f, 0f);
         transform.position += moveTo * moveSpeed * Time.deltaTime;
         //flip
         //if(Input.GetButtonDown("Horizontal")){
-            Debug.Log(horizonalInput);
-            Debug.Log(spriteRenderer.flipX);
-            if(horizonalInput ==-1f){
-                spriteRenderer.flipX =true;
-            }
-            if(horizonalInput ==1f){
-                spriteRenderer.flipX =false;
-            }
-            if(spriteRenderer.flipX){
-                hitbox.transform.position=transform.position+ new Vector3(-0.5f, 0.7f, 0);
-            }
-            else{
-                hitbox.transform.position=transform.position+ new Vector3(0.5f, 0.7f, 0);
-            }
+        if(horizonalInput ==-1f){
+            spriteRenderer.flipX =true;
+        }
+        if(horizonalInput ==1f){
+            spriteRenderer.flipX =false;
+        }
+        if(spriteRenderer.flipX){
+            hitbox.transform.position=transform.position+ new Vector3(-0.5f, 0.7f, 0);
+        }
+        else{
+            hitbox.transform.position=transform.position+ new Vector3(0.5f, 0.7f, 0);
+        }
         //}
 
         //run
@@ -73,11 +72,15 @@ public class Player : MonoBehaviour
             //}
         //}
         }
-        if(Input.GetButtonDown("Fire1") && anim.GetBool("isAttack") != true){
+        if(Input.GetButtonDown("Fire1") && !anim.GetBool("isAttack")){
             anim.SetBool("isAttack",true);
             StartCoroutine(ResetAttack());
         }
     Debug.Log(playerHealth);
+        if(playerHealth<=0 || transform.position.y<-3.5f){
+            playerHealth = 0;
+            anim.SetBool("death",true);
+        }
         
     }
     IEnumerator ResetAttack()
@@ -86,6 +89,9 @@ public class Player : MonoBehaviour
         anim.SetBool("isAttack", false); // isAttack을 false로 설정
     }
     private void OnCollisionStay2D(Collision2D other) {
+        if (anim.GetBool("death")){
+            return;
+        }
         if (other.gameObject.tag=="entity" && !anim.GetBool("isHit")){
             Animator targetAnimator = other.gameObject.GetComponent<Animator>();
             if(targetAnimator.GetBool("isAttacking")){

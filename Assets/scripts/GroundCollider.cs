@@ -18,7 +18,7 @@ public class CustomCollider : MonoBehaviour
     }
     private void OnTriggerStay2D(Collider2D other) {
         Animator playerAnimator = player.GetComponent<Animator>();
-        if (other.gameObject.tag == "Ground" && playerAnimator != null){
+        if ((other.gameObject.tag == "Ground"||other.gameObject.tag == "entity") && playerAnimator != null){
             playerAnimator.SetBool("isJump",false);
             //Debug.Log("collide!");
         }

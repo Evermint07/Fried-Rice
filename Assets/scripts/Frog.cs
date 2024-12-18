@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.Animations;
 
@@ -11,6 +12,7 @@ public class Frog : MonoBehaviour
     public Animator frogAnimator; // Animator 컴포넌트    
     public GameObject player;
     private Animator playerAnimator;
+    private uint health = 2;
     Rigidbody2D rigid;
     Animator anim;
     SpriteRenderer spriteRenderer;
@@ -28,6 +30,7 @@ public class Frog : MonoBehaviour
     //Vector3 moveTo = new Vector3(x, 0f, 0f); // 이게 매 프레임 초기화돼서 그런거임 start나 아예 밖으로 빼버리셈
     Vector3 move = new Vector3(1f, 0f, 0f);
     Vector3 move2 = new Vector3(1f, 0f, 0f);
+    public GameObject itemPrefab;
     void Awake() {
         rigid = GetComponent<Rigidbody2D>();
         spriteRenderer = GetComponent<SpriteRenderer>();
@@ -38,7 +41,8 @@ public class Frog : MonoBehaviour
     void Start()
     {
         playerAnimator = player.GetComponent<Animator>();
-        
+        player = GameManager.instance.player;
+        Debug.Log(player);
     }
 
     // Update is called once per frame
@@ -117,12 +121,16 @@ public class Frog : MonoBehaviour
         //Debug.Log(x);
         if (rigid.velocity.x != 0 && !anim.GetBool("ifHit"))
             rigid.velocity= Vector2.zero;
-        if (transform.position.y<=-4)
+        if (transform.position.y<=-3.1 || health == 0) {
+            for (int i =0; i < 10; i++)
+                Instantiate(itemPrefab, transform.position, Quaternion.identity);
             Destroy(gameObject);
-
+        }
+            
     }
     public void ApplyForce(Vector2 force)
     {
+        health -= 1;
         rigid.AddForce(force, ForceMode2D.Impulse);
         
     }

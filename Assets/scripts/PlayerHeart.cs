@@ -5,8 +5,8 @@ using UnityEngine;
 
 public class PlayerHeart : MonoBehaviour
 {
-    public int health;
-    public int numOfHearts;
+    public uint health;
+    public uint numOfHearts;
     public Player player;
     public Image[] hearts;
     public Sprite fullHeart;

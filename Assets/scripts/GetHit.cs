@@ -46,7 +46,7 @@ public class GetHit : MonoBehaviour
     {
         yield return new WaitForSeconds(0.5f); // 0.5초 대기
         frogAnimator.SetBool("ifHit", false); // isAttack을 false로 설정
-        frogRb.drag=0;
+        frogRb.drag=0.1f;
         frogRb.velocity = Vector2.zero;
     }
 }

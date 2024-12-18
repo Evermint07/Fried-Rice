@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class background : MonoBehaviour
 {
+    public GameObject cam;
+    private Vector3 camPosition;
     // Start is called before the first frame update
     void Start()
     {
