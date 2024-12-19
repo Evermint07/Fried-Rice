@@ -10,7 +10,10 @@ public class Frog : MonoBehaviour
     public float attackCooldown = 1.5f;
     private float nextAttackTime = 0f; // 다음 공격 가능 시간
     public Animator frogAnimator; // Animator 컴포넌트    
-    public GameObject player;
+    
+    [SerializeField]
+    private Player player;
+    
     private Animator playerAnimator;
     private uint health = 2;
     Rigidbody2D rigid;
@@ -31,7 +34,8 @@ public class Frog : MonoBehaviour
     Vector3 move = new Vector3(1f, 0f, 0f);
     Vector3 move2 = new Vector3(1f, 0f, 0f);
     public GameObject itemPrefab;
-    void Awake() {
+    void Awake()
+    {
         rigid = GetComponent<Rigidbody2D>();
         spriteRenderer = GetComponent<SpriteRenderer>();
         anim = GetComponent<Animator>();
@@ -41,108 +45,114 @@ public class Frog : MonoBehaviour
     void Start()
     {
         playerAnimator = player.GetComponent<Animator>();
-        player = GameManager.instance.player;
-        Debug.Log(player);
+        spriteRenderer.color = new Color(1f, 1f, 1f, 1f);
     }
 
     // Update is called once per frame
     void Update()
     {
-        
-        anim.SetInteger("isRunning",1);
+
+        anim.SetInteger("isRunning", 1);
         //anim.SetBool("isRuning",true);
         spriteRenderer.flipX = flip == -1;
         //MySpriteComponent otherComponent = FindObjectOfType<MySpriteComponent>();
         //float playerx = otherComponent.transform.position.x;
-        
-        Debug.DrawRay(transform.position,Vector3.down,new Color(0,1,0));
-        RaycastHit2D rayHit = Physics2D.Raycast(transform.position,Vector3.down,1,LayerMask.GetMask("Ground"));
-        if (!anim.GetBool("ifHit")){
-            if (!detection ){
-                if (rayHit.collider == null){
+
+        Debug.DrawRay(transform.position, Vector3.down, new Color(0, 1, 0));
+        RaycastHit2D rayHit = Physics2D.Raycast(transform.position, Vector3.down, 1, LayerMask.GetMask("Ground"));
+        if (!anim.GetBool("ifHit"))
+        {
+            if (!detection)
+            {
+                if (rayHit.collider == null)
+                {
                     current2_state = false;
-                    if (current_state){
-                        flip= flip*(-1);
-                        move.x = move.x*(-1f);
+                    if (current_state)
+                    {
+                        flip = flip * (-1);
+                        move.x = move.x * (-1f);
                         currentPosition = transform.position;
                         current_state = false;
                     }
                     transform.position += move * moveSpeed * Time.deltaTime;
-                //Debug.Log("turn!");
+                    //Debug.Log("turn!");
                 }
-                else{
-                    if (Mathf.Abs(currentPosition.x-transform.position.x)>=4){
+                else
+                {
+                    if (Mathf.Abs(currentPosition.x - transform.position.x) >= 4)
+                    {
                         move.x = -move.x;
                         Debug.Log("turn!");
                     }
-                    if (move.x>0){
+                    if (move.x > 0)
+                    {
                         flip = 1;
                     }
-                    else{
-                        flip = -1;                
+                    else
+                    {
+                        flip = -1;
                     }
                 }
-                transform.position += move * moveSpeed/3 * Time.deltaTime;
+                transform.position += move * moveSpeed / 3 * Time.deltaTime;
             }
-            else{
+            else
+            {
                 //Debug.Log("detection");
                 currentPosition = transform.position;
                 //float playerX = player.transform.position.x;
-                if (player.transform.position.x >= transform.position.x){
+                if (player.transform.position.x >= transform.position.x)
+                {
                     transform.position += move2 * moveSpeed * Time.deltaTime;
                     flip = 1;
                 }
-                else{
+                else
+                {
                     transform.position -= move2 * moveSpeed * Time.deltaTime;
                     flip = -1;
                 }
             }
-            
-            if (rayHit.collider == null && detection && !anim.GetBool("isJumping")){
-                current_state = false;
-                rigid.AddForce(Vector2.up*jumpPower,ForceMode2D.Impulse);
-                //Debug.Log("jump!");
-                anim.SetBool("isJumping",true);
-            }
-            //Debug.Log(anim.GetInteger("isRunning"));
-            if (anim.GetBool("isJumping")==false){
-                //Debug.Log("False");
-            }
-            else{
-                //Debug.Log("True");
-            }
-            //Debug.Log(current_state);
-            
-            //Debug.Log(anim.GetBool("ifHit"));
-        }
-        current_state=current2_state;
-        //Debug.Log(currentPosition.x-transform.position.x);
 
-        //Debug.Log(x);
-        if (rigid.velocity.x != 0 && !anim.GetBool("ifHit"))
-            rigid.velocity= Vector2.zero;
-        if (transform.position.y<=-3.1 || health == 0) {
-            for (int i =0; i < 10; i++)
-                Instantiate(itemPrefab, transform.position, Quaternion.identity);
-            Destroy(gameObject);
+            if (rayHit.collider == null && detection && !anim.GetBool("isJumping"))
+            {
+                current_state = false;
+                rigid.AddForce(Vector2.up * jumpPower, ForceMode2D.Impulse);
+                //Debug.Log("jump!");
+                anim.SetBool("isJumping", true);
+            }
         }
-            
+        current_state = current2_state;
+        
+        if (rigid.velocity.x != 0 && !anim.GetBool("ifHit"))
+            rigid.velocity = Vector2.zero;
+        if (transform.position.y <= -3.1 || health == 0)
+        {
+            for (int i = 0; i < 10; i++)
+                Instantiate(itemPrefab, transform.position, Quaternion.identity);
+            player.money += 500;
+            Debug.Log(player.money);
+            gameObject.SetActive(false);
+        }
+
     }
     public void ApplyForce(Vector2 force)
     {
         health -= 1;
         rigid.AddForce(force, ForceMode2D.Impulse);
-        
+        spriteRenderer.color = new Color(1f, 0.5f, 0.5f, 1f);
     }
-    private void OnCollisionEnter2D(Collision2D other) {
-        if (other.gameObject.tag=="Player"){
-        nextAttackTime = Time.time + 0.1f;
+    private void OnCollisionEnter2D(Collision2D other)
+    {
+        if (other.gameObject.tag == "Player")
+        {
+            nextAttackTime = Time.time + 0.1f;
         }
     }
-    private void OnCollisionStay2D(Collision2D other) {
-        if (other.gameObject.tag=="Player" && Time.time >= nextAttackTime){
+    private void OnCollisionStay2D(Collision2D other)
+    {
+        if (other.gameObject.tag == "Player" && Time.time >= nextAttackTime)
+        {
             nextAttackTime = Time.time + attackCooldown; // 다음 공격 시간 설정
-            anim.SetBool("isAttacking",true);
+            anim.SetBool("isAttacking", true);
             //Debug.Log(nextAttackTime);
             StartCoroutine(Unattack());
         }

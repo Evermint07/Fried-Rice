@@ -15,6 +15,9 @@ public class Player : MonoBehaviour
     [SerializeField]
     private float jumpPower;
     public float horizon;
+    public uint money;
+    [SerializeField]
+    private GameObject gameOver;
     // Start is called before the first frame update
     void Awake() {
         rigid = GetComponent<Rigidbody2D>();
@@ -30,8 +33,10 @@ public class Player : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (anim.GetBool("death"))
-        return;
+        if (anim.GetBool("death")) {
+            gameOver.SetActive(true);
+            return;
+        }
         float horizonalInput = Input.GetAxisRaw("Horizontal");
         //horizon=horizonalInput;
         Vector3 moveTo = new Vector3(horizonalInput, 0f, 0f);
