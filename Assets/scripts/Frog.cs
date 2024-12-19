@@ -131,8 +131,7 @@ public class Frog : MonoBehaviour
         {
             for (int i = 0; i < 10; i++)
                 Instantiate(itemPrefab, transform.position, Quaternion.identity);
-            playerp.money += 500;
-            playerp.moneyCount.text = playerp.money.ToString();
+            GameManager.instance.AddMoney(500);
             gameObject.SetActive(false);
         }
 
@@ -147,14 +146,14 @@ public class Frog : MonoBehaviour
     {
         if (other.gameObject.tag == "Player")
         {
-            nextAttackTime = Time.time + 0.1f;
+            nextAttackTime = (Time.time + 0.1f) * Time.deltaTime;
         }
     }
     private void OnCollisionStay2D(Collision2D other)
     {
-        if (other.gameObject.tag == "Player" && Time.time >= nextAttackTime)
+        if (other.gameObject.tag == "Player" && Time.time * Time.deltaTime >= nextAttackTime)
         {
-            nextAttackTime = Time.time + attackCooldown; // 다음 공격 시간 설정
+            nextAttackTime = (Time.time + attackCooldown) * Time.deltaTime; // 다음 공격 시간 설정
             anim.SetBool("isAttacking", true);
             //Debug.Log(nextAttackTime);
             StartCoroutine(Unattack());

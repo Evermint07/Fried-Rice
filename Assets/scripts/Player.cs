@@ -1,6 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class Player : MonoBehaviour
 {
@@ -83,6 +85,7 @@ public class Player : MonoBehaviour
     Debug.Log(playerHealth);
         if(playerHealth<=0 || transform.position.y<-3.5f){
             playerHealth = 0;
+            GameManager.instance.money = 0;
             anim.SetBool("death",true);
         }
         
@@ -109,6 +112,13 @@ public class Player : MonoBehaviour
                     rigid.AddForce(new Vector2(-10f, 5f), ForceMode2D.Impulse);
                 }
         }
+    }
+    void OnTriggerEnter2D(Collider2D collider)
+    {
+        Debug.Log(collider);
+        // 충돌한 오브젝트의 태그 확인
+        if (collider.tag == "Goal")
+            SceneManager.LoadScene("2Round");
     }
     IEnumerator UnHit()
     {
