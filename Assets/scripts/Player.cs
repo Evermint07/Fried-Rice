@@ -15,7 +15,6 @@ public class Player : MonoBehaviour
     [SerializeField]
     private float jumpPower;
     public float horizon;
-    public uint money;
     [SerializeField]
     private GameObject gameOver;
     // Start is called before the first frame update

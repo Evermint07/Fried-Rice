@@ -4,6 +4,7 @@ using Unity.VisualScripting;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.Animations;
+using UnityEngine.UI;
 
 public class Frog : MonoBehaviour
 {
@@ -12,7 +13,8 @@ public class Frog : MonoBehaviour
     public Animator frogAnimator; // Animator 컴포넌트    
     
     [SerializeField]
-    private Player player;
+    private GameManager playerp;
+    private GameObject player;
     
     private Animator playerAnimator;
     private uint health = 2;
@@ -44,6 +46,7 @@ public class Frog : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        player = GameManager.instance.player;
         playerAnimator = player.GetComponent<Animator>();
         spriteRenderer.color = new Color(1f, 1f, 1f, 1f);
     }
@@ -128,8 +131,8 @@ public class Frog : MonoBehaviour
         {
             for (int i = 0; i < 10; i++)
                 Instantiate(itemPrefab, transform.position, Quaternion.identity);
-            player.money += 500;
-            Debug.Log(player.money);
+            playerp.money += 500;
+            playerp.moneyCount.text = playerp.money.ToString();
             gameObject.SetActive(false);
         }
 

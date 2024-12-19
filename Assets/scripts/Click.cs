@@ -21,6 +21,6 @@ public class Click : MonoBehaviour
         string currentSceneName = SceneManager.GetActiveScene().name;
 
         // 현재 Scene 다시 로드
-        SceneManager.LoadScene(currentSceneName);
+        SceneManager.LoadScene("SampleScene");
     }
 }
