@@ -19,6 +19,7 @@ public class Click : MonoBehaviour
     {
         // 현재 Scene의 이름 가져오기
         string currentSceneName = SceneManager.GetActiveScene().name;
+        GameManager.instance.money = 0;
 
         // 현재 Scene 다시 로드
         SceneManager.LoadScene("SampleScene");

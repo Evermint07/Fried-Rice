@@ -82,7 +82,6 @@ public class Player : MonoBehaviour
             anim.SetBool("isAttack",true);
             StartCoroutine(ResetAttack());
         }
-    Debug.Log(playerHealth);
         if(playerHealth<=0 || transform.position.y<-3.5f){
             playerHealth = 0;
             GameManager.instance.money = 0;
@@ -110,15 +109,16 @@ public class Player : MonoBehaviour
                     rigid.AddForce(new Vector2(10f, 5f), ForceMode2D.Impulse); // 힘 설정
                 else
                     rigid.AddForce(new Vector2(-10f, 5f), ForceMode2D.Impulse);
-                }
+            }
         }
     }
     void OnTriggerEnter2D(Collider2D collider)
     {
-        Debug.Log(collider);
         // 충돌한 오브젝트의 태그 확인
-        if (collider.tag == "Goal")
+        if (collider.tag == "Goal") {
+            playerHealth = 5;
             SceneManager.LoadScene("2Round");
+        }
     }
     IEnumerator UnHit()
     {

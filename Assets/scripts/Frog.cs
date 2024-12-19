@@ -85,7 +85,6 @@ public class Frog : MonoBehaviour
                     if (Mathf.Abs(currentPosition.x - transform.position.x) >= 4)
                     {
                         move.x = -move.x;
-                        Debug.Log("turn!");
                     }
                     if (move.x > 0)
                     {
