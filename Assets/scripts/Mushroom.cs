@@ -6,19 +6,19 @@ using UnityEngine;
 using UnityEngine.Animations;
 using UnityEngine.UI;
 
-public class Goblin : MonoBehaviour
+public class Mushroom : MonoBehaviour
 {
     public bool attackReady = false;
-    public float attackCooldown = 1f;
+    public float attackCooldown = 1.8f;
     private float nextAttackTime = 0f; // 다음 공격 가능 시간
-    public Animator goblinAnimator; // Animator 컴포넌트    
+    public Animator frogAnimator; // Animator 컴포넌트    
     
     [SerializeField]
     private GameManager playerp;
     private GameObject player;
     
     private Animator playerAnimator;
-    private uint health = 4;
+    private uint health = 6;
     Rigidbody2D rigid;
     Animator anim;
     SpriteRenderer spriteRenderer;
@@ -37,6 +37,7 @@ public class Goblin : MonoBehaviour
     Vector3 move = new Vector3(1f, 0f, 0f);
     Vector3 move2 = new Vector3(1f, 0f, 0f);
     public GameObject itemPrefab;
+    public GameObject poison;
     void Awake()
     {
         rigid = GetComponent<Rigidbody2D>();
@@ -55,14 +56,15 @@ public class Goblin : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        Debug.Log(current_state);
         anim.SetBool("isRunning", true);
         //anim.SetBool("isRuning",true);
         spriteRenderer.flipX = flip == -1;
         //MySpriteComponent otherComponent = FindObjectOfType<MySpriteComponent>();
         //float playerx = otherComponent.transform.position.x;
 
-        Debug.DrawRay(transform.position, Vector3.down, new Color(0, 3, 0));
-        RaycastHit2D rayHit = Physics2D.Raycast(transform.position, Vector3.down, 2, LayerMask.GetMask("Ground"));
+        Debug.DrawRay(transform.position, Vector3.down, new Color(0, 8, 0));
+        RaycastHit2D rayHit = Physics2D.Raycast(transform.position, Vector3.down, 4, LayerMask.GetMask("Ground"));
         if (!anim.GetBool("isHit"))
         {
             if (!detection)
@@ -82,6 +84,7 @@ public class Goblin : MonoBehaviour
                 }
                 else
                 {
+                    current2_state = true;
                     if (Mathf.Abs(currentPosition.x - transform.position.x) >= 4)
                     {
                         move.x = -move.x;
@@ -126,15 +129,13 @@ public class Goblin : MonoBehaviour
         
         if (rigid.velocity.x != 0 && !anim.GetBool("isHit"))
             rigid.velocity = Vector2.zero;
-        if (transform.position.y <= -2.85 || health == 0)
+        if (transform.position.y <= -2.8 || health == 0)
         {
-            if(anim.GetBool("isDie")== false ){
-                anim.SetBool("isDie",true);
-                for (int i = 0; i < 20; i++)
-                {
-                    Instantiate(itemPrefab, transform.position, Quaternion.identity);
-                }
-                GameManager.instance.AddMoney(1000);
+            if (!anim.GetBool("isDie")){
+                anim.SetBool("isDie", true);
+                for (int i = 0; i < 25; i++)
+                Instantiate(itemPrefab, transform.position, Quaternion.identity);
+                GameManager.instance.AddMoney(1500);
                 StartCoroutine(Die());
             }
 
@@ -149,40 +150,23 @@ public class Goblin : MonoBehaviour
                 StartCoroutine(Unattack());
             }
         }
-
     }
     public void ApplyForce(Vector2 force)
     {
         health -= 1;
         rigid.AddForce(force, ForceMode2D.Impulse);
-        spriteRenderer.color += new Color(0f, -0.12f, -0.12f, 0f);
+        spriteRenderer.color += new Color(0f, -0.2f, -0.2f, 0f);
     }
-    private void OnCollisionEnter2D(Collision2D other)
-    {
-        if (other.gameObject.tag == "Player")
-        {
-            nextAttackTime = (Time.time + 0.1f) * Time.deltaTime;
-        }
-    }
-    /*
-    private void OnCollisionStay2D(Collision2D other)
-    {
-        if (other.gameObject.tag == "Player" && Time.time * Time.deltaTime >= nextAttackTime)
-        {
-            nextAttackTime = (Time.time + attackCooldown) * Time.deltaTime; // 다음 공격 시간 설정
-            anim.SetBool("isAttacking", true);
-            //Debug.Log(nextAttackTime);
-            StartCoroutine(Unattack());
-        }
-    }
-    */
+
     IEnumerator Unattack()
     {
-        yield return new WaitForSeconds(0.3f); // 0.5초 대기
+        
+        yield return new WaitForSeconds(0.7f); // 0.5초 대기
+        Instantiate(poison, transform.position, Quaternion.identity);
         anim.SetBool("isAttacking", false); // isAttack을 false로 설정
     }
     IEnumerator Die(){
-        yield return new WaitForSeconds(0.6f);
+        yield return new WaitForSeconds(0.5f);
         Destroy(gameObject);
     }
 }

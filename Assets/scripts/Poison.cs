@@ -4,34 +4,31 @@ using static UnityEngine.Random;
 using UnityEngine;
 using System;
 
-public class FriedRice : MonoBehaviour
+public class Poison : MonoBehaviour
 {
-    Rigidbody2D rigid;
+    //Rigidbody2D rigid;
     private GameObject player;
+    public float speed = 5f;
+    private Vector3 direction;
+    public bool way=false;
     // Start is called before the first frame update
-    private float offset = 3.3f;
     void Start()
     {
-        rigid = GetComponent<Rigidbody2D>();
-        rigid.gravityScale = 0;
-        float randX = Range(-18f, 18f);
-        float randY = Range(-18f, 18f);
-        rigid.AddForce(new Vector2(randX * 25, randY * 25));
         player = GameManager.instance.player;
+        direction = (player.transform.position+new Vector3(0f,1f,0f) - transform.position).normalized;
     }
 
     // Update is called once per frame
     void Update()
     {
-        StartCoroutine(Force());
+        if (direction.x>0){
+            way=true;
+        }
+        else{
+            way=false;
+        }
+        transform.position += direction * speed * Time.deltaTime;
         StartCoroutine(Death());
-    }
-    IEnumerator Force()
-    {
-        yield return new WaitForSeconds(0.15f); // 0.5초 대기
-        offset = Math.Min(offset / 1.06f, 0.1f);
-        rigid.AddForce((player.transform.position-transform.position)/offset);
-        transform.position += (player.transform.position-transform.position)/(offset*200);
     }
     IEnumerator Death()
     {

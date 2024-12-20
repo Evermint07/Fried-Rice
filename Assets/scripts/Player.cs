@@ -6,6 +6,7 @@ using UnityEngine.UI;
 
 public class Player : MonoBehaviour
 {
+    private bool goal=false;
     public uint playerHealth;
     public GameObject hitbox;
     Rigidbody2D rigid;
@@ -34,6 +35,7 @@ public class Player : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        
         if (anim.GetBool("death")) {
             gameOver.SetActive(true);
             return;
@@ -112,13 +114,47 @@ public class Player : MonoBehaviour
             }
         }
     }
+    private void OnTriggerStay2D(Collider2D other){
+        Debug.Log("trigger");
+        if (anim.GetBool("death")){
+            return;
+        }
+        
+        if (other.gameObject.tag=="EnemyAttack" && !anim.GetBool("isHit")){
+            //Goblin_AttackCollider collider;
+            Goblin_AttackCollider collider=other.GetComponent<Goblin_AttackCollider>();
+            if(collider.attacking){
+                anim.SetBool("isHit",true);
+                playerHealth -=1;
+                StartCoroutine(UnHit());
+                rigid.drag = 3f;
+                if (spriteRenderer.flipX)
+                    rigid.AddForce(new Vector2(10f, 5f), ForceMode2D.Impulse); // 힘 설정
+                else
+                    rigid.AddForce(new Vector2(-10f, 5f), ForceMode2D.Impulse);
+            }
+
+        }
+    }
     void OnTriggerEnter2D(Collider2D collider)
     {
         // 충돌한 오브젝트의 태그 확인
-        if (collider.tag == "Goal") {
+        if (collider.tag == "Goal" && !goal) {
             playerHealth = 5;
             GameManager.instance.AddMoney(2000);
+            goal = true;
             SceneManager.LoadScene("2Round");
+        }
+        if(collider.gameObject.tag=="Fire"&& !anim.GetBool("isHit")){
+            Poison poison = collider.gameObject.GetComponent<Poison>();
+            anim.SetBool("isHit",true);
+            playerHealth -=1;
+            StartCoroutine(UnHit());
+            rigid.drag = 3f;
+            if (poison.way)
+                rigid.AddForce(new Vector2(10f, 5f), ForceMode2D.Impulse); // 힘 설정
+            else
+                rigid.AddForce(new Vector2(-10f, 5f), ForceMode2D.Impulse);
         }
     }
     IEnumerator UnHit()
