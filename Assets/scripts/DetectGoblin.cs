@@ -2,14 +2,14 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Detect : MonoBehaviour
+public class DetectGoblin : MonoBehaviour
 {
     
-    public Frog frog;
+    public Goblin frog;
     // Start is called before the first frame update
     void Start()
     {
-        frog.detection = false;
+        
     }
 
     // Update is called once per frame

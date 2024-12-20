@@ -117,6 +117,7 @@ public class Player : MonoBehaviour
         // 충돌한 오브젝트의 태그 확인
         if (collider.tag == "Goal") {
             playerHealth = 5;
+            GameManager.instance.AddMoney(2000);
             SceneManager.LoadScene("2Round");
         }
     }

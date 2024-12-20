@@ -9,14 +9,14 @@ public class FriedRice : MonoBehaviour
     Rigidbody2D rigid;
     private GameObject player;
     // Start is called before the first frame update
-    private float offset = 1.3f;
+    private float offset = 3.3f;
     void Start()
     {
         rigid = GetComponent<Rigidbody2D>();
         rigid.gravityScale = 0;
         float randX = Range(-18f, 18f);
         float randY = Range(-18f, 18f);
-        rigid.AddForce(new Vector2(randX * 20, randY * 20));
+        rigid.AddForce(new Vector2(randX * 25, randY * 25));
         player = GameManager.instance.player;
     }
 
@@ -29,8 +29,9 @@ public class FriedRice : MonoBehaviour
     IEnumerator Force()
     {
         yield return new WaitForSeconds(0.15f); // 0.5초 대기
-        offset = Math.Min(offset / 1.02f, 0.1f);
+        offset = Math.Min(offset / 1.06f, 0.1f);
         rigid.AddForce((player.transform.position-transform.position)/offset);
+        transform.position += (player.transform.position-transform.position)/(offset*1000);
     }
     IEnumerator Death()
     {
