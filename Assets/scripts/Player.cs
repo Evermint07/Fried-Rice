@@ -6,6 +6,7 @@ using UnityEngine.UI;
 
 public class Player : MonoBehaviour
 {
+    private bool hitting=false;
     private bool goal=false;
     public uint playerHealth;
     public GameObject hitbox;
@@ -35,7 +36,7 @@ public class Player : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+        //Debug.Log(transform.position);
         if (anim.GetBool("death")) {
             gameOver.SetActive(true);
             return;
@@ -133,6 +134,20 @@ public class Player : MonoBehaviour
                 else
                     rigid.AddForce(new Vector2(-10f, 5f), ForceMode2D.Impulse);
             }
+        }
+        if (other.gameObject.tag=="StrongAttack" && !anim.GetBool("isHit")){
+            //Goblin_AttackCollider collider;
+            SkeletonAttackCollider colliding=other.GetComponent<SkeletonAttackCollider>();
+            if(colliding.attacking){
+                anim.SetBool("isHit",true);
+                playerHealth -=1;
+                StartCoroutine(UnHit());
+                rigid.drag = 3f;
+                if (spriteRenderer.flipX)
+                    rigid.AddForce(new Vector2(15f, 18f), ForceMode2D.Impulse); // 힘 설정
+                else
+                    rigid.AddForce(new Vector2(-15f, 18f), ForceMode2D.Impulse);
+            }
 
         }
     }
@@ -144,11 +159,18 @@ public class Player : MonoBehaviour
             GameManager.instance.AddMoney(2000);
             goal = true;
             SceneManager.LoadScene("2Round");
+            goal=false;
+        }
+        if (collider.tag == "Goal2" && !goal) {
+            playerHealth = 5;
+            GameManager.instance.AddMoney(3000);
+            goal = true;
+            SceneManager.LoadScene("Final Round");
         }
         if(collider.gameObject.tag=="Fire"&& !anim.GetBool("isHit")){
             Poison poison = collider.gameObject.GetComponent<Poison>();
             anim.SetBool("isHit",true);
-            playerHealth -=1;
+            //playerHealth -=1;
             StartCoroutine(UnHit());
             rigid.drag = 3f;
             if (poison.way)
@@ -159,8 +181,12 @@ public class Player : MonoBehaviour
     }
     IEnumerator UnHit()
     {
+        hitting=true;
         yield return new WaitForSeconds(0.5f); // 0.5초 대기
-        anim.SetBool("isHit", false); // isAttack을 false로 설정
+        anim.SetBool("isHit", false); 
+        hitting=false;
+
+        
         rigid.drag=0;
         rigid.velocity = Vector2.zero;
     }

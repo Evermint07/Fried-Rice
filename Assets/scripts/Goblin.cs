@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Mathematics;
 using Unity.VisualScripting;
 using UnityEditor;
 using UnityEngine;
@@ -18,7 +19,7 @@ public class Goblin : MonoBehaviour
     private GameObject player;
     
     private Animator playerAnimator;
-    private uint health = 4;
+    public uint health = 4;
     Rigidbody2D rigid;
     Animator anim;
     SpriteRenderer spriteRenderer;
@@ -99,10 +100,19 @@ public class Goblin : MonoBehaviour
             }
             else
             {
+                
                 //Debug.Log("detection");
                 currentPosition = transform.position;
                 //float playerX = player.transform.position.x;
-                if (player.transform.position.x >= transform.position.x)
+
+                if (math.abs(player.transform.position.x - transform.position.x) <= 0.1f){
+                    anim.SetBool("isStop", true);
+                    flip=1;
+                    //transform.position= new Vector3(player.transform.position.x, transform.position.y, transform.position.z);
+                }
+                else{
+                    anim.SetBool("isStop", false);
+                    if (player.transform.position.x >= transform.position.x)
                 {
                     transform.position += move2 * moveSpeed * Time.deltaTime;
                     flip = 1;
@@ -111,6 +121,7 @@ public class Goblin : MonoBehaviour
                 {
                     transform.position -= move2 * moveSpeed * Time.deltaTime;
                     flip = -1;
+                }
                 }
             }
 
@@ -159,10 +170,7 @@ public class Goblin : MonoBehaviour
     }
     private void OnCollisionEnter2D(Collision2D other)
     {
-        if (other.gameObject.tag == "Player")
-        {
-            nextAttackTime = (Time.time + 0.1f) * Time.deltaTime;
-        }
+
     }
     /*
     private void OnCollisionStay2D(Collision2D other)

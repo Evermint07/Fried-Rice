@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Mathematics;
 using Unity.VisualScripting;
 using UnityEditor;
 using UnityEngine;
@@ -99,6 +100,14 @@ public class Frog : MonoBehaviour
             }
             else
             {
+                if (math.abs(player.transform.position.x - transform.position.x) <= 0.1f){
+                    anim.SetInteger("isRunning", 0);
+                    anim.SetBool("isAttacking", false);
+                    anim.SetBool("ifHit", false);
+                    flip = 1;
+
+                }
+                else{
                 //Debug.Log("detection");
                 currentPosition = transform.position;
                 //float playerX = player.transform.position.x;
@@ -111,6 +120,7 @@ public class Frog : MonoBehaviour
                 {
                     transform.position -= move2 * moveSpeed * Time.deltaTime;
                     flip = -1;
+                }
                 }
             }
 

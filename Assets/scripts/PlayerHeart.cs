@@ -20,9 +20,13 @@ public class PlayerHeart : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        //Debug.Log(player.playerHealth);
         health = player.playerHealth;
-        if (health > numOfHearts)
+        if (health > numOfHearts){
+            //Debug.Log(numOfHearts);
             health= numOfHearts;
+            player.playerHealth = numOfHearts;
+        }
         
         for (int i  = 0; i < hearts.Length; i++) {
             if (i-1< health)

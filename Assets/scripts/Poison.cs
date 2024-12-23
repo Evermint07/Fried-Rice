@@ -39,8 +39,11 @@ public class Poison : MonoBehaviour
     private void OnTriggerStay2D(Collider2D other)
     {
         // frog 또는 frogAnimator가 null이면 실행 중단
-        if (other.gameObject.tag == "Player")
+        if (other.gameObject.tag == "Player"){
+            player.GetComponent<Player>().playerHealth -= 1;
             Destroy(gameObject);
+        }
+            //Destroy(gameObject);
 
     }
 }
