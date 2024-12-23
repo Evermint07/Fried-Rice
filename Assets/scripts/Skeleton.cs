@@ -24,11 +24,11 @@ public class Skeleton : MonoBehaviour
     Animator anim;
     SpriteRenderer spriteRenderer;
     [SerializeField]
-    private float moveSpeed;
+    public float moveSpeed;
     [SerializeField]
     private float jumpPower;
-    public bool current_state;
-    public bool current2_state;
+    public bool ground_collider; //current
+    public bool rayHit_collider;
     public bool detection;
     private int flip = -1;
     Vector3 currentPosition;
@@ -57,27 +57,33 @@ public class Skeleton : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        anim.SetBool("isRunning", true);
-        //anim.SetBool("isRuning",true);
+        if (!anim.GetBool("isShield")){
+            Debug.Log("notshield");
+        }
+        //anim.SetBool("isRunning", true);
         spriteRenderer.flipX = flip == -1;
         //MySpriteComponent otherComponent = FindObjectOfType<MySpriteComponent>();
         //float playerx = otherComponent.transform.position.x;
 
         Debug.DrawRay(transform.position, Vector3.down, new Color(0, 3, 0));
+        Debug.DrawRay(new Vector3(transform.position.x,transform.position.y-0.3f,0), Vector3.left*0.65f, new Color(0, 3, 0));
         RaycastHit2D rayHit = Physics2D.Raycast(transform.position, Vector3.down, 2, LayerMask.GetMask("Ground"));
+        RaycastHit2D rayLeft = Physics2D.Raycast(new Vector3(transform.position.x,transform.position.y-0.3f,0), Vector3.left, 0.65f, LayerMask.GetMask("Ground"));
+        RaycastHit2D rayRight = Physics2D.Raycast(new Vector3(transform.position.x,transform.position.y-0.3f,0), Vector3.right, 0.65f, LayerMask.GetMask("Ground"));
         if (!anim.GetBool("isHit"))
         {
             if (!detection)
             {
-                if (rayHit.collider == null)
+                Debug.Log(rayLeft.collider);
+                if (rayHit.collider == null || rayLeft.collider !=null || rayRight.collider !=null)
                 {
-                    current2_state = false;
-                    if (current_state)
+                    ground_collider = false;
+                    if (rayHit_collider)
                     {
                         flip = flip * (-1);
                         move.x = move.x * (-1f);
                         currentPosition = transform.position;
-                        current_state = false;
+                        rayHit_collider = false;
                     }
                     transform.position += move * moveSpeed * Time.deltaTime;
                     //Debug.Log("turn!");
@@ -101,14 +107,20 @@ public class Skeleton : MonoBehaviour
             }
             else
             {
-                
                 //Debug.Log("detection");
                 currentPosition = transform.position;
+
+
+
+                
                 //float playerX = player.transform.position.x;
 
-                if (math.abs(player.transform.position.x - transform.position.x) <= 0.1f){
+                if (math.abs(player.transform.position.x - transform.position.x) <= 0.1f || ((rayLeft.collider !=null || rayRight.collider !=null) && (rayLeft.collider !=null==(flip==-1))) ){
                     anim.SetBool("isStop", true);
-                    flip=1;
+                    if(math.abs(player.transform.position.x - transform.position.x) <= 0.1f){
+                        flip=1;
+                    }
+                    
                     //transform.position= new Vector3(player.transform.position.x, transform.position.y, transform.position.z);
                 }
                 else{
@@ -128,13 +140,13 @@ public class Skeleton : MonoBehaviour
 
             if (rayHit.collider == null && detection && !anim.GetBool("isJumping"))
             {
-                current_state = false;
+                rayHit_collider = false;
                 rigid.AddForce(Vector2.up * jumpPower, ForceMode2D.Impulse);
                 //Debug.Log("jump!");
                 anim.SetBool("isJumping", true);
             }
         }
-        current_state = current2_state;
+        rayHit_collider = ground_collider;
         
         if (rigid.velocity.x != 0 && !anim.GetBool("isHit"))
             rigid.velocity = Vector2.zero;
@@ -143,52 +155,37 @@ public class Skeleton : MonoBehaviour
             if(anim.GetBool("isDie")== false ){
                 anim.SetBool("isDie",true);
                 for (int i = 0; i < 20; i++)
-                {
                     Instantiate(itemPrefab, transform.position, Quaternion.identity);
-                }
                 GameManager.instance.AddMoney(1000);
                 StartCoroutine(Die());
             }
 
         }
-        if (attackReady){
-            if ( Time.time*Time.deltaTime >= nextAttackTime*Time.deltaTime )//&& !anim.GetBool("isAttacking")
-            {
-                //Debug.Log("attack!");
-                nextAttackTime = Time.time + attackCooldown; // 다음 공격 시간 설정
-                anim.SetBool("isAttacking", true);
-                attackReady = false;
-                StartCoroutine(Unattack());
-            }
-        }
-        
-
-    }
-    public void ApplyForce(Vector2 force)
-    {
-        health -= 1;
-        rigid.AddForce(force, ForceMode2D.Impulse);
-        spriteRenderer.color += new Color(0f, -0.12f, -0.12f, 0f);
-    }
-    private void OnCollisionEnter2D(Collision2D other)
-    {
-        // if (other.gameObject.tag == "Player")
-        // {
-        //     nextAttackTime = (Time.time + 0.1f) * Time.deltaTime;
-        // }
-    }
-    /*
-    private void OnCollisionStay2D(Collision2D other)
-    {
-        if (other.gameObject.tag == "Player" && Time.time * Time.deltaTime >= nextAttackTime)
-        {
-            nextAttackTime = (Time.time + attackCooldown) * Time.deltaTime; // 다음 공격 시간 설정
+        if (attackReady && (Time.time*Time.deltaTime >= nextAttackTime*Time.deltaTime)) {
+            
+            nextAttackTime = Time.time + attackCooldown; // 다음 공격 시간 설정
             anim.SetBool("isAttacking", true);
-            //Debug.Log(nextAttackTime);
+            attackReady = false;
             StartCoroutine(Unattack());
         }
+        
     }
-    */
+    public void ApplyForce(Vector2 force)//맞음
+    {
+        health -= 1;
+        if(!anim.GetBool("isShield")){
+            //anim.SetBool("isHit", true);
+            rigid.AddForce(force, ForceMode2D.Impulse);
+            spriteRenderer.color += new Color(0f, -0.12f, -0.12f, 0f);
+        }
+        else{
+            moveSpeed = 3f;
+            force=new Vector2(force.x,force.y)*0.3f;
+            rigid.AddForce(force, ForceMode2D.Impulse);
+            moveSpeed = 0f;
+        }
+    }
+
     IEnumerator Unattack()
     {
         yield return new WaitForSeconds(0.65f); // 0.5초 대기

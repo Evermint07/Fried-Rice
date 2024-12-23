@@ -24,17 +24,24 @@ public class SkeletonAttackCollider : MonoBehaviour
         }
     }
     private void OnTriggerStay2D(Collider2D other){
+        //Debug.Log(other.tag);
+        //
         if (other.tag == "Player"){
             //Debug.Log(other);
+            
             goblin.attackReady = true;
         }
     }
     IEnumerator Attack(){
-        attack = true;
-        yield return new WaitForSeconds(0.3f);
-        attacking = true;
-        yield return new WaitForSeconds(0.35f);
-        attacking = false;
-        attack = false;
+        if(!goblinAnimator.GetBool("isShield")){
+            attack = true;
+            yield return new WaitForSeconds(0.3f);
+            if(!goblinAnimator.GetBool("isHit")){
+                attacking = true;
+            }
+            yield return new WaitForSeconds(0.35f);
+            attacking = false;
+            attack = false;
+        }
     }
 }

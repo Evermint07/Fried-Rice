@@ -27,6 +27,7 @@ public class MushroomHit : MonoBehaviour
     {
         
     }
+    
     private void OnTriggerStay2D(Collider2D other){
         if (other.gameObject.tag == "Attack" && playerAnimator.GetBool("isAttack") && frogAnimator.GetBool("isHit") != true){
             frogAnimator.SetBool("isHit",true);

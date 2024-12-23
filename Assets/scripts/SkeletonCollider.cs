@@ -52,7 +52,7 @@ public class SkeletonCollider : MonoBehaviour
         if (other.gameObject.tag == "Ground")
         {
             // Frog 상태 변경
-            frog.current2_state = true;
+            frog.rayHit_collider = true;
 
             // Animator 상태 변경
             frogAnimator.SetBool("isJumping", false);

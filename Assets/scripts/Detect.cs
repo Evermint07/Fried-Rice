@@ -11,12 +11,10 @@ public class Detect : MonoBehaviour
     {
         frog.detection = false;
     }
-
     // Update is called once per frame
     void Update()
     {
         //Debug.Log(frog.detection);
-
     }
     private void OnTriggerEnter2D(Collider2D other) {
         if (other.gameObject.tag == "Player"){

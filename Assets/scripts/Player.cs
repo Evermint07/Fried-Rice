@@ -6,7 +6,7 @@ using UnityEngine.UI;
 
 public class Player : MonoBehaviour
 {
-    private bool hitting=false;
+    //private bool hitting=false;
     private bool goal=false;
     public uint playerHealth;
     public GameObject hitbox;
@@ -36,6 +36,8 @@ public class Player : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (rigid.velocity.x != 0 && !anim.GetBool("isHit"))
+            rigid.velocity = Vector2.zero;
         //Debug.Log(transform.position);
         if (anim.GetBool("death")) {
             gameOver.SetActive(true);
@@ -129,7 +131,7 @@ public class Player : MonoBehaviour
                 playerHealth -=1;
                 StartCoroutine(UnHit());
                 rigid.drag = 3f;
-                if (spriteRenderer.flipX)
+                if (transform.position.x>collider.transform.position.x)
                     rigid.AddForce(new Vector2(10f, 5f), ForceMode2D.Impulse); // 힘 설정
                 else
                     rigid.AddForce(new Vector2(-10f, 5f), ForceMode2D.Impulse);
@@ -143,7 +145,7 @@ public class Player : MonoBehaviour
                 playerHealth -=1;
                 StartCoroutine(UnHit());
                 rigid.drag = 3f;
-                if (spriteRenderer.flipX)
+                if (transform.position.x>colliding.transform.position.x)
                     rigid.AddForce(new Vector2(15f, 18f), ForceMode2D.Impulse); // 힘 설정
                 else
                     rigid.AddForce(new Vector2(-15f, 18f), ForceMode2D.Impulse);
@@ -181,10 +183,10 @@ public class Player : MonoBehaviour
     }
     IEnumerator UnHit()
     {
-        hitting=true;
+        //hitting=true;
         yield return new WaitForSeconds(0.5f); // 0.5초 대기
         anim.SetBool("isHit", false); 
-        hitting=false;
+        //hitting=false;
 
         
         rigid.drag=0;

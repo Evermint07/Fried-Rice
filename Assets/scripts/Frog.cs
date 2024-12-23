@@ -26,8 +26,8 @@ public class Frog : MonoBehaviour
     private float moveSpeed;
     [SerializeField]
     private float jumpPower;
-    public bool current_state;
-    public bool current2_state;
+    public bool rayHit_collider;
+    public bool ground_collider;
     public bool detection;
     private int flip = -1;
     Vector3 currentPosition;
@@ -64,19 +64,21 @@ public class Frog : MonoBehaviour
 
         Debug.DrawRay(transform.position, Vector3.down, new Color(0, 1, 0));
         RaycastHit2D rayHit = Physics2D.Raycast(transform.position, Vector3.down, 1, LayerMask.GetMask("Ground"));
+        RaycastHit2D rayLeft = Physics2D.Raycast(new Vector3(transform.position.x,transform.position.y-0.3f,0), Vector3.left, 0.65f, LayerMask.GetMask("Ground"));
+        RaycastHit2D rayRight = Physics2D.Raycast(new Vector3(transform.position.x,transform.position.y-0.3f,0), Vector3.right, 0.65f, LayerMask.GetMask("Ground"));
         if (!anim.GetBool("ifHit"))
         {
             if (!detection)
             {
-                if (rayHit.collider == null)
+                if (rayHit.collider == null|| rayLeft.collider !=null || rayRight.collider !=null)
                 {
-                    current2_state = false;
-                    if (current_state)
+                    ground_collider = false;
+                    if (rayHit_collider)
                     {
                         flip = flip * (-1);
                         move.x = move.x * (-1f);
                         currentPosition = transform.position;
-                        current_state = false;
+                        rayHit_collider = false;
                     }
                     transform.position += move * moveSpeed * Time.deltaTime;
                     //Debug.Log("turn!");
@@ -100,11 +102,14 @@ public class Frog : MonoBehaviour
             }
             else
             {
-                if (math.abs(player.transform.position.x - transform.position.x) <= 0.1f){
+
+                if (math.abs(player.transform.position.x - transform.position.x) <= 0.1f || ((rayLeft.collider !=null || rayRight.collider !=null) && (rayLeft.collider !=null==(flip==-1)))){
                     anim.SetInteger("isRunning", 0);
                     anim.SetBool("isAttacking", false);
                     anim.SetBool("ifHit", false);
-                    flip = 1;
+                    if(math.abs(player.transform.position.x - transform.position.x) <= 0.1f){
+                        flip=1;
+                    }
 
                 }
                 else{
@@ -126,13 +131,13 @@ public class Frog : MonoBehaviour
 
             if (rayHit.collider == null && detection && !anim.GetBool("isJumping"))
             {
-                current_state = false;
+                rayHit_collider = false;
                 rigid.AddForce(Vector2.up * jumpPower, ForceMode2D.Impulse);
                 //Debug.Log("jump!");
                 anim.SetBool("isJumping", true);
             }
         }
-        current_state = current2_state;
+        rayHit_collider = ground_collider;
         
         if (rigid.velocity.x != 0 && !anim.GetBool("ifHit"))
             rigid.velocity = Vector2.zero;
@@ -153,10 +158,10 @@ public class Frog : MonoBehaviour
     }
     private void OnCollisionEnter2D(Collision2D other)
     {
-        if (other.gameObject.tag == "Player")
-        {
-            nextAttackTime = (Time.time + 0.1f) * Time.deltaTime;
-        }
+        // if (other.gameObject.tag == "Player")
+        // {
+        //     nextAttackTime = (Time.time + attackCooldown) * Time.deltaTime;
+        // }
     }
     private void OnCollisionStay2D(Collision2D other)
     {

@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Mathematics;
 using Unity.VisualScripting;
 using UnityEditor;
 using UnityEngine;
@@ -26,14 +27,14 @@ public class Mushroom : MonoBehaviour
     private float moveSpeed;
     [SerializeField]
     private float jumpPower;
-    public bool current_state;
-    public bool current2_state;
+    public bool rayHit_collider;
+    public bool ground_collider;
     public bool detection;
     private int flip = -1;
     Vector3 currentPosition;
     public Vector2 forceRight = new Vector2(3f, 4f); // 오른쪽 방향 힘
     public Vector2 forceLeft = new Vector2(-3f, 4f); // 왼쪽 방향 힘
-    //Vector3 moveTo = new Vector3(x, 0f, 0f); // 이게 매 프레임 초기화돼서 그런거임 start나 아예 밖으로 빼버리셈
+    //private Vector2 rayStart = new Vector2(transform.position.x, transform.position.y - 1f);
     Vector3 move = new Vector3(1f, 0f, 0f);
     Vector3 move2 = new Vector3(1f, 0f, 0f);
     public GameObject itemPrefab;
@@ -57,35 +58,38 @@ public class Mushroom : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        Debug.Log(current_state);
+        Debug.Log(rayHit_collider);
         anim.SetBool("isRunning", true);
         //anim.SetBool("isRuning",true);
         spriteRenderer.flipX = flip == -1;
         //MySpriteComponent otherComponent = FindObjectOfType<MySpriteComponent>();
         //float playerx = otherComponent.transform.position.x;
 
-        Debug.DrawRay(transform.position, Vector3.down, new Color(0, 8, 0));
+        Debug.DrawRay(new Vector3(transform.position.x,transform.position.y,0), Vector3.down, new Color(0, 8, 0));
+        Debug.DrawRay(new Vector3(transform.position.x,transform.position.y-0.5f,0), Vector3.left*0.6f, new Color(0, 8, 0));
         RaycastHit2D rayHit = Physics2D.Raycast(transform.position, Vector3.down, 4, LayerMask.GetMask("Ground"));
+        RaycastHit2D rayLeft = Physics2D.Raycast(new Vector3(transform.position.x,transform.position.y-0.5f,0), Vector3.left, 0.6f, LayerMask.GetMask("Ground"));
+        RaycastHit2D rayRight = Physics2D.Raycast(new Vector3(transform.position.x,transform.position.y-0.5f,0), Vector3.right, 0.6f, LayerMask.GetMask("Ground"));
         if (!anim.GetBool("isHit"))
         {
             if (!detection)
             {
-                if (rayHit.collider == null)
+                if (rayHit.collider == null|| rayLeft.collider !=null || rayRight.collider !=null)
                 {
-                    current2_state = false;
-                    if (current_state)
+                    ground_collider = false;
+                    if (rayHit_collider)
                     {
-                        flip = flip * (-1);
-                        move.x = move.x * (-1f);
+                        flip = -flip;
+                        move.x = -move.x;
                         currentPosition = transform.position;
-                        current_state = false;
+                        rayHit_collider = false;
                     }
                     transform.position += move * moveSpeed * Time.deltaTime;
                     //Debug.Log("turn!");
                 }
                 else
                 {
-                    current2_state = true;
+                    ground_collider = true;
                     if (Mathf.Abs(currentPosition.x - transform.position.x) >= 4)
                     {
                         move.x = -move.x;
@@ -106,7 +110,16 @@ public class Mushroom : MonoBehaviour
                 //Debug.Log("detection");
                 currentPosition = transform.position;
                 //float playerX = player.transform.position.x;
-                if (player.transform.position.x >= transform.position.x)
+                if (math.abs(player.transform.position.x - transform.position.x) <= 0.1f || ((rayLeft.collider !=null || rayRight.collider !=null) && (rayLeft.collider !=null==(flip==-1))) ){
+                    anim.SetBool("isStop", true);
+                    if(math.abs(player.transform.position.x - transform.position.x) <= 0.1f){
+                        flip=1;
+                    }
+                    //transform.position= new Vector3(player.transform.position.x, transform.position.y, transform.position.z);
+                }
+                else{
+                    anim.SetBool("isStop", false);
+                    if (player.transform.position.x >= transform.position.x)
                 {
                     transform.position += move2 * moveSpeed * Time.deltaTime;
                     flip = 1;
@@ -116,17 +129,18 @@ public class Mushroom : MonoBehaviour
                     transform.position -= move2 * moveSpeed * Time.deltaTime;
                     flip = -1;
                 }
+                }
             }
 
             if (rayHit.collider == null && detection && !anim.GetBool("isJumping"))
             {
-                current_state = false;
+                rayHit_collider = false;
                 rigid.AddForce(Vector2.up * jumpPower, ForceMode2D.Impulse);
                 //Debug.Log("jump!");
                 anim.SetBool("isJumping", true);
             }
         }
-        current_state = current2_state;
+        rayHit_collider = ground_collider;
         
         if (rigid.velocity.x != 0 && !anim.GetBool("isHit"))
             rigid.velocity = Vector2.zero;
@@ -142,15 +156,12 @@ public class Mushroom : MonoBehaviour
             }
 
         }
-        if (attackReady){
-            if ( Time.time*Time.deltaTime >= nextAttackTime*Time.deltaTime)
-            {
-                //Debug.Log("attack!");
-                nextAttackTime = Time.time + attackCooldown; // 다음 공격 시간 설정
-                anim.SetBool("isAttacking", true);
-                attackReady = false;
-                StartCoroutine(Unattack());
-            }
+        if (attackReady && (Time.time*Time.deltaTime >= nextAttackTime*Time.deltaTime)){
+            //Debug.Log("attack!");
+            nextAttackTime = Time.time + attackCooldown; // 다음 공격 시간 설정
+            anim.SetBool("isAttacking", true);
+            attackReady = false;
+            StartCoroutine(Unattack());
         }
     }
     public void ApplyForce(Vector2 force)
@@ -162,7 +173,6 @@ public class Mushroom : MonoBehaviour
 
     IEnumerator Unattack()
     {
-        
         yield return new WaitForSeconds(0.7f); // 0.5초 대기
         Instantiate(poison, transform.position, Quaternion.identity);
         anim.SetBool("isAttacking", false); // isAttack을 false로 설정
