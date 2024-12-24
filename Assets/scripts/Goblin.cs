@@ -11,7 +11,7 @@ public class Goblin : MonoBehaviour
 {
     public bool attackReady = false;
     public float attackCooldown = 1f;
-    private float nextAttackTime = 0f; // 다음 공격 가능 시간
+    public float nextAttackTime = 0f; // 다음 공격 가능 시간
     public Animator goblinAnimator; // Animator 컴포넌트    
     
     [SerializeField]
@@ -111,6 +111,13 @@ public class Goblin : MonoBehaviour
                     anim.SetBool("isStop", true);
                     if(math.abs(player.transform.position.x - transform.position.x) <= 0.1f){
                         flip=1;
+                    }
+                    else{
+                        
+                        if(!anim.GetBool("isJumping")){
+                            rigid.AddForce(Vector2.up * jumpPower, ForceMode2D.Impulse);
+                            anim.SetBool("isJumping", true);
+                        }
                     }
                     //transform.position= new Vector3(player.transform.position.x, transform.position.y, transform.position.z);
                 }

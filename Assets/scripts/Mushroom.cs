@@ -114,6 +114,7 @@ public class Mushroom : MonoBehaviour
                     anim.SetBool("isStop", true);
                     if(math.abs(player.transform.position.x - transform.position.x) <= 0.1f){
                         flip=1;
+
                     }
                     //transform.position= new Vector3(player.transform.position.x, transform.position.y, transform.position.z);
                 }

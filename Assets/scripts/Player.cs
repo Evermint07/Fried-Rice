@@ -122,11 +122,12 @@ public class Player : MonoBehaviour
         if (anim.GetBool("death")){
             return;
         }
-        
-        if (other.gameObject.tag=="EnemyAttack" && !anim.GetBool("isHit")){
+
+        if (other.gameObject.tag=="EnemyAttack" && !anim.GetBool("isHit") ){
             //Goblin_AttackCollider collider;
+
             Goblin_AttackCollider collider=other.GetComponent<Goblin_AttackCollider>();
-            if(collider.attacking){
+            if(collider.attacking ){
                 anim.SetBool("isHit",true);
                 playerHealth -=1;
                 StartCoroutine(UnHit());
@@ -155,7 +156,6 @@ public class Player : MonoBehaviour
     }
     void OnTriggerEnter2D(Collider2D collider)
     {
-        // 충돌한 오브젝트의 태그 확인
         if (collider.tag == "Goal" && !goal) {
             playerHealth = 5;
             GameManager.instance.AddMoney(2000);
@@ -169,17 +169,18 @@ public class Player : MonoBehaviour
             goal = true;
             SceneManager.LoadScene("Final Round");
         }
-        if(collider.gameObject.tag=="Fire"&& !anim.GetBool("isHit")){
-            Poison poison = collider.gameObject.GetComponent<Poison>();
-            anim.SetBool("isHit",true);
-            //playerHealth -=1;
-            StartCoroutine(UnHit());
-            rigid.drag = 3f;
-            if (poison.way)
-                rigid.AddForce(new Vector2(10f, 5f), ForceMode2D.Impulse); // 힘 설정
-            else
-                rigid.AddForce(new Vector2(-10f, 5f), ForceMode2D.Impulse);
-        }
+
+    }
+    public void playerDamaged(Vector3 pos)
+    {
+        anim.SetBool("isHit",true);
+        playerHealth -=1;
+        StartCoroutine(UnHit());
+        rigid.drag = 3f;
+        if (transform.position.x>pos.x)
+            rigid.AddForce(new Vector2(5f, 2f), ForceMode2D.Impulse); // 힘 설정
+        else
+            rigid.AddForce(new Vector2(-5f, 2f), ForceMode2D.Impulse);
     }
     IEnumerator UnHit()
     {

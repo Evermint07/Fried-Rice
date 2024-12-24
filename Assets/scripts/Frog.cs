@@ -9,6 +9,8 @@ using UnityEngine.UI;
 
 public class Frog : MonoBehaviour
 {
+    //public string collidertag;
+
     public float attackCooldown = 1.5f;
     private float nextAttackTime = 0f; // 다음 공격 가능 시간
     public Animator frogAnimator; // Animator 컴포넌트    
@@ -55,7 +57,7 @@ public class Frog : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-
+        Debug.Log(string.Format("time{0}next{1}", Time.time,nextAttackTime));
         anim.SetInteger("isRunning", 1);
         //anim.SetBool("isRuning",true);
         spriteRenderer.flipX = flip == -1;
@@ -110,6 +112,12 @@ public class Frog : MonoBehaviour
                     if(math.abs(player.transform.position.x - transform.position.x) <= 0.1f){
                         flip=1;
                     }
+                    else{
+                        if(!anim.GetBool("isJumping")){
+                            rigid.AddForce(Vector2.up * jumpPower, ForceMode2D.Impulse);
+                            anim.SetBool("isJumping", true);
+                        }
+                    }
 
                 }
                 else{
@@ -158,21 +166,29 @@ public class Frog : MonoBehaviour
     }
     private void OnCollisionEnter2D(Collision2D other)
     {
-        // if (other.gameObject.tag == "Player")
-        // {
-        //     nextAttackTime = (Time.time + attackCooldown) * Time.deltaTime;
-        // }
+        if (other.gameObject.tag == "Player")
+        {
+            nextAttackTime += 0.1f*Time.deltaTime;
+        }
     }
     private void OnCollisionStay2D(Collision2D other)
     {
-        if (other.gameObject.tag == "Player" && Time.time * Time.deltaTime >= nextAttackTime)
+
+        if (other.gameObject.tag == "Player")
         {
-            nextAttackTime = (Time.time + attackCooldown) * Time.deltaTime; // 다음 공격 시간 설정
-            anim.SetBool("isAttacking", true);
-            //Debug.Log(nextAttackTime);
-            StartCoroutine(Unattack());
+            //collidertag = other.gameObject.tag;
+            if(Time.time * Time.deltaTime >= nextAttackTime){
+                nextAttackTime = (Time.time + attackCooldown) * Time.deltaTime; // 다음 공격 시간 설정
+                anim.SetBool("isAttacking", true);
+                //Debug.Log(nextAttackTime);
+                StartCoroutine(Unattack());
+            }
         }
+        // else{
+        //     collidertag = null;
+        // }
     }
+
     IEnumerator Unattack()
     {
         yield return new WaitForSeconds(0.3f); // 0.5초 대기

@@ -7,15 +7,19 @@ using System;
 public class Poison : MonoBehaviour
 {
     //Rigidbody2D rigid;
-    private GameObject player;
+    private GameObject playerObj;
+    private Player player;
     public float speed = 5f;
     private Vector3 direction;
     public bool way=false;
+    //private Rigidbody2D rigidPlayer;
     // Start is called before the first frame update
     void Start()
     {
-        player = GameManager.instance.player;
-        direction = (player.transform.position+new Vector3(0f,1f,0f) - transform.position).normalized;
+        playerObj = GameManager.instance.player;
+        player = playerObj.GetComponent<Player>(); // Player 객체 초기화
+        direction = (playerObj.transform.position+new Vector3(0f,1f,0f) - transform.position).normalized;
+        //rigidPlayer = player.GetComponent<Rigidbody2D>();
     }
 
     // Update is called once per frame
@@ -36,14 +40,11 @@ public class Poison : MonoBehaviour
         Destroy(gameObject);
     }
 
-    private void OnTriggerStay2D(Collider2D other)
+    private void OnCollisionEnter2D(Collision2D other)
     {
-        // frog 또는 frogAnimator가 null이면 실행 중단
-        if (other.gameObject.tag == "Player"){
-            player.GetComponent<Player>().playerHealth -= 1;
+        if (other.gameObject.CompareTag("Player")) {
             Destroy(gameObject);
+            player.playerDamaged(transform.position);
         }
-            //Destroy(gameObject);
-
     }
 }

@@ -9,6 +9,7 @@ public class SkeletonAttackCollider : MonoBehaviour
     public Animator animator;
     public bool attacking=false;
     private bool attack=false;
+    //public string collidertag;
     // Start is called before the first frame update
     void Start()
     {
@@ -24,14 +25,19 @@ public class SkeletonAttackCollider : MonoBehaviour
         }
     }
     private void OnTriggerStay2D(Collider2D other){
-        //Debug.Log(other.tag);
+        //Debug.Log(string.Format("cotag{0} tag{1}",collidertag,other.tag));
         //
         if (other.tag == "Player"){
             //Debug.Log(other);
             
             goblin.attackReady = true;
+            //collidertag = other.tag;
         }
+        // else{
+        //     collidertag = null;
+        // }
     }
+
     IEnumerator Attack(){
         if(!goblinAnimator.GetBool("isShield")){
             attack = true;
