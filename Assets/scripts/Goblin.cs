@@ -146,7 +146,7 @@ public class Goblin : MonoBehaviour
         }
         rayHit_collider = ground_collider;
         
-        if (rigid.velocity.x != 0 && !anim.GetBool("isHit"))
+        if (math.abs(player.transform.position.x - transform.position.x) >= 17f && !anim.GetBool("isHit"))
             rigid.velocity = Vector2.zero;
         if (transform.position.y <= -2.85 || health == 0)
         {
@@ -179,9 +179,14 @@ public class Goblin : MonoBehaviour
         rigid.AddForce(force, ForceMode2D.Impulse);
         spriteRenderer.color += new Color(0f, -0.12f, -0.12f, 0f);
     }
-    private void OnCollisionEnter2D(Collision2D other)
+    private void OnCollisionStay2D(Collision2D other)
     {
-
+        if(other.gameObject.tag =="Player"){
+            Animator otheranim = other.gameObject.GetComponent<Animator>();
+            if(rigid.velocity!=Vector2.zero && otheranim.GetBool("isHit")){
+                rigid.velocity = Vector2.zero;
+            }
+        }
     }
     /*
     private void OnCollisionStay2D(Collision2D other)
@@ -204,4 +209,5 @@ public class Goblin : MonoBehaviour
         yield return new WaitForSeconds(0.6f);
         Destroy(gameObject);
     }
+    
 }

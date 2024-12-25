@@ -74,7 +74,7 @@ public class Skeleton : MonoBehaviour
         {
             if (!detection)
             {
-                Debug.Log(rayLeft.collider);
+                //Debug.Log(rayLeft.collider);
                 if (rayHit.collider == null || rayLeft.collider !=null || rayRight.collider !=null)
                 {
                     ground_collider = false;
@@ -155,7 +155,7 @@ public class Skeleton : MonoBehaviour
         }
         rayHit_collider = ground_collider;
         
-        if (rigid.velocity.x != 0 && !anim.GetBool("isHit"))
+        if (math.abs(player.transform.position.x - transform.position.x) >= 17f && !anim.GetBool("isHit"))
             rigid.velocity = Vector2.zero;
         if (transform.position.y <= -2.85 || health == 0)
         {
@@ -201,5 +201,14 @@ public class Skeleton : MonoBehaviour
     IEnumerator Die(){
         yield return new WaitForSeconds(0.3f);
         Destroy(gameObject);
+    }
+    private void OnCollisionStay2D(Collision2D other)
+    {
+        if(other.gameObject.tag =="Player"){
+            Animator otheranim = other.gameObject.GetComponent<Animator>();
+            if(rigid.velocity!=Vector2.zero && otheranim.GetBool("isHit")){
+                rigid.velocity = Vector2.zero;
+            }
+        }
     }
 }

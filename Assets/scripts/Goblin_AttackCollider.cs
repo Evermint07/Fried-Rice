@@ -20,6 +20,7 @@ public class Goblin_AttackCollider : MonoBehaviour
     void Update()
     {
         attacking=goblinAnimator.GetBool("isAttacking");
+
     }
     private void OnTriggerStay2D(Collider2D other){
         if (other.tag == "Player"){

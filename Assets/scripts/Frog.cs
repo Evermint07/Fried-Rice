@@ -57,7 +57,7 @@ public class Frog : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        Debug.Log(string.Format("time{0}next{1}", Time.time,nextAttackTime));
+        //Debug.Log(string.Format("time{0}next{1}", Time.time,nextAttackTime));
         anim.SetInteger("isRunning", 1);
         //anim.SetBool("isRuning",true);
         spriteRenderer.flipX = flip == -1;
@@ -147,7 +147,7 @@ public class Frog : MonoBehaviour
         }
         rayHit_collider = ground_collider;
         
-        if (rigid.velocity.x != 0 && !anim.GetBool("ifHit"))
+        if (math.abs(player.transform.position.x - transform.position.x) >= 17f && !anim.GetBool("ifHit"))
             rigid.velocity = Vector2.zero;
         if (transform.position.y <= -3.1 || health == 0)
         {
@@ -176,6 +176,10 @@ public class Frog : MonoBehaviour
 
         if (other.gameObject.tag == "Player")
         {
+            Animator otheranim = other.gameObject.GetComponent<Animator>();
+            if(rigid.velocity!=Vector2.zero && otheranim.GetBool("isHit")){
+                rigid.velocity = Vector2.zero;
+            }
             //collidertag = other.gameObject.tag;
             if(Time.time * Time.deltaTime >= nextAttackTime){
                 nextAttackTime = (Time.time + attackCooldown) * Time.deltaTime; // 다음 공격 시간 설정

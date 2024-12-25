@@ -44,7 +44,7 @@ public class Poison : MonoBehaviour
     {
         if (other.gameObject.CompareTag("Player")) {
             Destroy(gameObject);
-            player.playerDamaged(transform.position);
+            //player.playerDamaged(transform.position);
         }
     }
 }
