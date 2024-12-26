@@ -193,7 +193,7 @@ public class Player : MonoBehaviour
     }
     void OnTriggerEnter2D(Collider2D collider)
     {
-        if (collider.tag == "Finish" && !goal) {
+        if (collider.tag == "Finish" && !goal && !anim.GetBool("death")){ 
             playerHealth = 5;
             GameManager.instance.AddMoney(4000);
             anim.SetBool("death",true);
@@ -202,16 +202,18 @@ public class Player : MonoBehaviour
         }
         if (collider.tag == "Goal" && !goal) {
             playerHealth = 5;
-            GameManager.instance.AddMoney(2000);
             goal = true;
+            GameManager.instance.AddMoney(2000);
+            //Debug.Log("goal");
+            
             SceneManager.LoadScene("2Round");
-            goal=false;
+            //goal=false;
         }
         if (collider.tag == "Goal2" && !goal) {
             playerHealth = 5;
             GameManager.instance.AddMoney(3000);
             goal = true;
-            SceneManager.LoadScene("Final Round");
+            SceneManager.LoadScene("FinalRound");
         }
 
     }

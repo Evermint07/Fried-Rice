@@ -148,7 +148,10 @@ public class Goblin : MonoBehaviour
         
         if (math.abs(player.transform.position.x - transform.position.x) >= 17f && !anim.GetBool("isHit"))
             rigid.velocity = Vector2.zero;
-        if (transform.position.y <= -2.85 || health == 0)
+
+        if (rigid.velocity.x != 0 && !anim.GetBool("isHit")&& rayLeft.collider==null && rayLeft.collider ==null) //고대의 코드
+            rigid.velocity = Vector2.zero;
+        if (transform.position.y <= -2.85f || health == 0)
         {
             if(anim.GetBool("isDie")== false ){
                 anim.SetBool("isDie",true);
@@ -156,7 +159,7 @@ public class Goblin : MonoBehaviour
                 {
                     Instantiate(itemPrefab, transform.position, Quaternion.identity);
                 }
-                GameManager.instance.AddMoney(700);
+                GameManager.instance.AddMoney(600);
                 StartCoroutine(Die());
             }
 

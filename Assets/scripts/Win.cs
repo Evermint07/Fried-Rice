@@ -6,22 +6,32 @@ using UnityEngine.UI; // Image 클래스를 사용하기 위해 추가
 public class Win : MonoBehaviour
 {
     public Player player;
-    public Image targetImage; // 변경할 UI 이미지
-    public Sprite newSprite;
-
+    public GameObject win;
+    private SpriteRenderer spriteRenderer;
     // Start is called before the first frame update
+    
     void Start()
     {
+        //gameObject.SetActive(false);
+        //spriteRenderer = GetComponent<SpriteRenderer>();
+        win.SetActive(false);
     }
 
     void Update()
     {
         Debug.Log(player.playerHealth);
-        //Debug.Log(player.win);
-        if (player != null && targetImage != null && newSprite != null && player.win)
+        //
+        if (player.win)
         {
-            targetImage.sprite = newSprite; // 스프라이트 변경 완료
-            //Debug.Log("UI 이미지 스프라이트가 변경되었습니다!");
+            Debug.Log(player.win);
+            //spriteRenderer.color = new Color(1, 1, 1, 1);
+            win.SetActive(true);
+            
+        }
+        else{
+            win.SetActive(false);
+            //spriteRenderer.color = new Color(1, 1, 1, 0);
+
         }
     }
 }

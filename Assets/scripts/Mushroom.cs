@@ -58,6 +58,7 @@ public class Mushroom : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+
         anim.SetBool("isRunning", true);
         //anim.SetBool("isRuning",true);
         spriteRenderer.flipX = flip == -1;
@@ -69,6 +70,8 @@ public class Mushroom : MonoBehaviour
         RaycastHit2D rayHit = Physics2D.Raycast(transform.position, Vector3.down, 4, LayerMask.GetMask("Ground"));
         RaycastHit2D rayLeft = Physics2D.Raycast(new Vector3(transform.position.x,transform.position.y-0.5f,0), Vector3.left, 0.6f, LayerMask.GetMask("Ground"));
         RaycastHit2D rayRight = Physics2D.Raycast(new Vector3(transform.position.x,transform.position.y-0.5f,0), Vector3.right, 0.6f, LayerMask.GetMask("Ground"));
+        if (rigid.velocity.x != 0 && !anim.GetBool("isHit")&& rayLeft.collider==null && rayLeft.collider ==null) //고대의 코드
+            rigid.velocity = Vector2.zero;
         if (!anim.GetBool("isHit"))
         {
             if (!detection)
@@ -144,7 +147,7 @@ public class Mushroom : MonoBehaviour
         
         if (math.abs(player.transform.position.x - transform.position.x) >= 17f && !anim.GetBool("isHit"))
             rigid.velocity = Vector2.zero;
-        if (transform.position.y <= -2.8 || health == 0)
+        if (transform.position.y <= -2.5f || health == 0)
         {
             if (!anim.GetBool("isDie")){
                 anim.SetBool("isDie", true);

@@ -67,6 +67,8 @@ public class Skeleton : MonoBehaviour
         RaycastHit2D rayHit = Physics2D.Raycast(transform.position, Vector3.down, 2, LayerMask.GetMask("Ground"));
         RaycastHit2D rayLeft = Physics2D.Raycast(new Vector3(transform.position.x,transform.position.y-0.3f,0), Vector3.left, 0.65f, LayerMask.GetMask("Ground"));
         RaycastHit2D rayRight = Physics2D.Raycast(new Vector3(transform.position.x,transform.position.y-0.3f,0), Vector3.right, 0.65f, LayerMask.GetMask("Ground"));
+        if (rigid.velocity.x != 0 && !anim.GetBool("isHit")&& rayLeft.collider==null && rayLeft.collider ==null) //고대의 코드
+            rigid.velocity = Vector2.zero;
         if (!anim.GetBool("isHit"))
         {
             if (!detection)

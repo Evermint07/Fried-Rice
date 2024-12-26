@@ -57,6 +57,8 @@ public class Frog : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        //if (rigid.velocity.x != 0 && !anim.GetBool("isHit")&& rayLeft.collider==null && rayLeft.collider ==null) //고대의 코드
+        //    rigid.velocity = Vector2.zero;
         //Debug.Log(string.Format("time{0}next{1}", Time.time,nextAttackTime));
         anim.SetInteger("isRunning", 1);
         //anim.SetBool("isRuning",true);
@@ -68,6 +70,8 @@ public class Frog : MonoBehaviour
         RaycastHit2D rayHit = Physics2D.Raycast(transform.position, Vector3.down, 1, LayerMask.GetMask("Ground"));
         RaycastHit2D rayLeft = Physics2D.Raycast(new Vector3(transform.position.x,transform.position.y-0.3f,0), Vector3.left, 0.65f, LayerMask.GetMask("Ground"));
         RaycastHit2D rayRight = Physics2D.Raycast(new Vector3(transform.position.x,transform.position.y-0.3f,0), Vector3.right, 0.65f, LayerMask.GetMask("Ground"));
+        if (rigid.velocity.x != 0 && !anim.GetBool("ifHit")&& rayLeft.collider==null && rayLeft.collider ==null) //고대의 코드
+            rigid.velocity = Vector2.zero;
         if (!anim.GetBool("ifHit"))
         {
             if (!detection)
@@ -149,11 +153,11 @@ public class Frog : MonoBehaviour
         
         if (math.abs(player.transform.position.x - transform.position.x) >= 17f && !anim.GetBool("ifHit"))
             rigid.velocity = Vector2.zero;
-        if (transform.position.y <= -3.1 || health == 0)
+        if (transform.position.y <= -3.1f || health == 0)
         {
             for (int i = 0; i < 10; i++)
                 Instantiate(itemPrefab, transform.position, Quaternion.identity);
-            GameManager.instance.AddMoney(500);
+            GameManager.instance.AddMoney(400);
             gameObject.SetActive(false);
         }
 

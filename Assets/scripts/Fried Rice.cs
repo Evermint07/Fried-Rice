@@ -29,7 +29,7 @@ public class FriedRice : MonoBehaviour
     IEnumerator Force()
     {
         yield return new WaitForSeconds(0.15f); // 0.5초 대기
-        offset = Math.Min(offset / 1.06f, 0.1f);
+        offset = Math.Max(offset / 1.06f, 0.1f);
         rigid.AddForce((player.transform.position-transform.position)/offset);
         transform.position += (player.transform.position-transform.position)/(offset*200);
     }
