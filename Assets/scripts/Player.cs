@@ -6,8 +6,9 @@ using UnityEngine.UI;
 
 public class Player : MonoBehaviour
 {
+    public bool win = false;
     private bool reset=false;
-    private Vector2 boxSize=new Vector2(0.83f,1.23f);
+    private Vector2 boxSize=new Vector2(0.75f,1.23f);
     public Vector3 boxCenter=new Vector3(0f,0.68f,0f);
     //private bool hitting=false;
     private bool goal=false;
@@ -99,7 +100,7 @@ public class Player : MonoBehaviour
         }
         if(playerHealth<=0 || transform.position.y<-3.5f){
             playerHealth = 0;
-            GameManager.instance.money = 0;
+            //GameManager.instance.money = 0;
             anim.SetBool("death",true);
         }
         
@@ -192,6 +193,13 @@ public class Player : MonoBehaviour
     }
     void OnTriggerEnter2D(Collider2D collider)
     {
+        if (collider.tag == "Finish" && !goal) {
+            playerHealth = 5;
+            GameManager.instance.AddMoney(4000);
+            anim.SetBool("death",true);
+            goal =true;
+            win = true;
+        }
         if (collider.tag == "Goal" && !goal) {
             playerHealth = 5;
             GameManager.instance.AddMoney(2000);
@@ -226,8 +234,6 @@ public class Player : MonoBehaviour
         yield return new WaitForSeconds(0.5f); // 0.5초 대기
         anim.SetBool("isHit", false); 
         //hitting=false;
-
-        
         rigid.drag=0;
         rigid.velocity = Vector2.zero;
     }

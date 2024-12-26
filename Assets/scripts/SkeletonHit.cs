@@ -27,7 +27,6 @@ public class SkeletonHit : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        Debug.Log(frogAnimator.GetBool("isShield"));
     }
     private void OnTriggerStay2D(Collider2D other){
         if (other.gameObject.tag == "Attack" && playerAnimator.GetBool("isAttack") && frogAnimator.GetBool("isHit") != true){
@@ -63,7 +62,7 @@ public class SkeletonHit : MonoBehaviour
         yield return new WaitForSeconds(5f);
         frogAnimator.SetBool("isShield",false);
         frogScript.moveSpeed=3;
-        frogScript.health=8;
+        frogScript.health=6;
         skeletonRenderer.color = new Color (1f,1f,1f,1f);
     }
 }

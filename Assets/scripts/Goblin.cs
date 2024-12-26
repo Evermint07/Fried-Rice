@@ -156,7 +156,7 @@ public class Goblin : MonoBehaviour
                 {
                     Instantiate(itemPrefab, transform.position, Quaternion.identity);
                 }
-                GameManager.instance.AddMoney(1000);
+                GameManager.instance.AddMoney(700);
                 StartCoroutine(Die());
             }
 

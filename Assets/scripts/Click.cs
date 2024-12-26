@@ -23,5 +23,6 @@ public class Click : MonoBehaviour
 
         // 현재 Scene 다시 로드
         SceneManager.LoadScene("SampleScene");
+        
     }
 }

@@ -57,9 +57,6 @@ public class Skeleton : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (!anim.GetBool("isShield")){
-            Debug.Log("notshield");
-        }
         //anim.SetBool("isRunning", true);
         spriteRenderer.flipX = flip == -1;
         //MySpriteComponent otherComponent = FindObjectOfType<MySpriteComponent>();
@@ -163,7 +160,7 @@ public class Skeleton : MonoBehaviour
                 anim.SetBool("isDie",true);
                 for (int i = 0; i < 20; i++)
                     Instantiate(itemPrefab, transform.position, Quaternion.identity);
-                GameManager.instance.AddMoney(1000);
+                GameManager.instance.AddMoney(1500);
                 StartCoroutine(Die());
             }
 

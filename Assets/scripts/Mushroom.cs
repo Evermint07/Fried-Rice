@@ -19,7 +19,7 @@ public class Mushroom : MonoBehaviour
     private GameObject player;
     
     private Animator playerAnimator;
-    private uint health = 6;
+    private uint health = 4;
     Rigidbody2D rigid;
     Animator anim;
     SpriteRenderer spriteRenderer;
@@ -58,7 +58,6 @@ public class Mushroom : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        Debug.Log(rayHit_collider);
         anim.SetBool("isRunning", true);
         //anim.SetBool("isRuning",true);
         spriteRenderer.flipX = flip == -1;
@@ -152,7 +151,7 @@ public class Mushroom : MonoBehaviour
                 Instantiate(heart, transform.position, Quaternion.identity);
                 for (int i = 0; i < 25; i++)
                 Instantiate(itemPrefab, transform.position, Quaternion.identity);
-                GameManager.instance.AddMoney(1500);
+                GameManager.instance.AddMoney(1000);
                 StartCoroutine(Die());
             }
 
